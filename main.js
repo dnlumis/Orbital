@@ -15,7 +15,7 @@ const WINDOW_BOUNDS = {
   expanded: { width: 430, height: 760 },
   compact: {
     1: { width: 360, height: 132 },
-    2: { width: 430, height: 252 },
+    2: { width: 468, height: 292 },
   },
 };
 const FLEX_BOUNDS = {

@@ -442,10 +442,10 @@ button {
 }
 
 .compact-player-alt {
-  grid-template-columns: 126px minmax(0, 1fr);
-  gap: 18px;
-  align-items: center;
-  padding: 16px 18px 18px;
+  grid-template-columns: 156px minmax(0, 1fr);
+  gap: 20px;
+  align-items: stretch;
+  padding: 18px 20px 18px 18px;
 }
 
 .artwork {
@@ -466,9 +466,13 @@ button {
 }
 
 .alt-artwork {
-  width: 126px;
-  height: 126px;
-  border-radius: 18px;
+  width: 156px;
+  height: 156px;
+  border-radius: 16px;
+  align-self: center;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.22),
+    0 10px 24px rgba(0, 0, 0, 0.18);
 }
 
 .compact-body {
@@ -528,10 +532,12 @@ button {
 .compact-alt-main {
   display: grid;
   grid-template-rows: auto auto auto auto;
-  gap: 14px;
+  gap: 12px;
   min-width: 0;
+  min-height: 0;
   align-self: stretch;
-  padding: 2px 0;
+  padding: 4px 0;
+  justify-content: center;
 }
 
 .compact-alt-top {
@@ -545,20 +551,21 @@ button {
 .compact-alt-copy {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
 
 .compact-alt-copy .meta-artist {
-  font-size: 0.9rem;
-  color: rgba(237, 243, 251, 0.78);
+  font-size: 0.88rem;
+  line-height: 1.2;
+  color: rgba(237, 243, 251, 0.76);
 }
 
 .alt-title-line {
   --base-duration: 12s;
-  font-size: 1.24rem;
-  line-height: 1.02;
-  letter-spacing: -0.04em;
+  font-size: 1.18rem;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
 }
 
 .alt-artist-line {
@@ -571,14 +578,14 @@ button {
 
 .compact-progress {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .compact-progress-times {
   display: flex;
   justify-content: space-between;
   color: rgba(237, 243, 251, 0.5);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.02em;
 }
 
@@ -614,25 +621,34 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .alt-play {
   min-width: 88px;
-  height: 44px;
-  font-size: 0.96rem;
+  height: 42px;
+  font-size: 0.94rem;
 }
 
 .compact-alt-footer {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
+  align-self: end;
 }
 
 .compact-player-alt .compact-health {
   color: rgba(237, 243, 251, 0.56);
+  font-size: 0.69rem;
+  line-height: 1.2;
+}
+
+.compact-player-alt .player-button.expand {
+  height: 24px;
+  padding: 0 9px;
+  font-size: 0.69rem;
 }
 
 .scrolling-line {
