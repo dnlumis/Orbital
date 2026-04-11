@@ -1,16 +1,32 @@
 # Dependencies
 node_modules/
 jspm_packages/
+.npm/
 
 # Build output
 dist/
 out/
 build/
 release/
+win-unpacked/
+linux-unpacked/
+mac-unpacked/
 *.exe
+*.msi
+*.appx
+*.nupkg
+*.blockmap
 *.dmg
+*.AppImage
+*.deb
+*.rpm
+*.snap
 *.zip
 *.tar.gz
+latest.yml
+latest-mac.yml
+latest-linux.yml
+builder-debug.yml
 
 # Logs
 logs/
@@ -19,6 +35,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+pnpm-debug.log*
+electron-debug.log*
 
 # Runtime data
 pids/
@@ -32,6 +50,7 @@ pids/
 .env.*.local
 *.pem
 *.key
+*.pfx
 
 # Editor and IDE
 .vscode/
@@ -53,11 +72,14 @@ ehthumbs.db
 Thumbs.db
 desktop.ini
 
-# Electron-specific
+# Electron / release tooling
 app/dist/
 .electron-gyp/
 
 # Misc
 .cache/
+.nyc_output/
 .tmp/
+tmp/
+.eslintcache
 coverage/
