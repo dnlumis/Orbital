@@ -1,0 +1,13 @@
+{
+  "name": "orbital",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Orbital, a floating YouTube Music shell with compact mini player modes.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^36.6.0"
+  }
+}

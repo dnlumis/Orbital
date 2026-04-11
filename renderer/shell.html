@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orbital</title>
+  <link rel="stylesheet" href="shell.css">
+</head>
+<body class="mode-expanded">
+  <div class="window">
+    <header class="titlebar">
+      <div class="brand">
+        <p class="health-line">
+          <span id="healthDot" class="health-dot tone-neutral"></span>
+          <span id="healthSubline">Waiting for player</span>
+        </p>
+      </div>
+
+      <div class="title-actions">
+        <button id="pinButton" class="icon-control" type="button" aria-label="Toggle pin" title="Pin">
+          <span class="icon icon-pin" aria-hidden="true"></span>
+        </button>
+        <button id="compactButton" class="icon-control" type="button" aria-label="Toggle compact mode" title="Compact mode">
+          <span class="icon icon-compact" aria-hidden="true"></span>
+        </button>
+        <button id="compactAltButton" class="icon-control" type="button" aria-label="Open alt compact mode" title="Alt compact mode">
+          <span class="icon icon-compact-alt" aria-hidden="true"></span>
+        </button>
+        <button id="flexButton" class="icon-control" type="button" aria-label="Toggle flexible sizing" title="Adjust size">
+          <span class="icon icon-resize" aria-hidden="true"></span>
+        </button>
+        <button id="minimizeButton" class="icon-control" type="button" aria-label="Minimize" title="Minimize">
+          <span class="icon icon-minimize" aria-hidden="true"></span>
+        </button>
+        <button id="closeButton" class="icon-control danger" type="button" aria-label="Close" title="Close">
+          <span class="icon icon-close" aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="compact-player" id="compactPlayer" aria-label="Compact mini player">
+        <div class="artwork" id="artwork"></div>
+
+        <div class="compact-body">
+          <h2 id="trackTitle" class="scrolling-line title-line">Open YouTube Music and sign in</h2>
+          <p id="trackArtist" class="meta-artist scrolling-line artist-line">Your session will stay inside this app.</p>
+          <p class="compact-footer">
+            <span id="healthDetail" class="compact-health scrolling-line footer-line">Waiting for player</span>
+          </p>
+        </div>
+
+        <div class="compact-actions">
+          <div class="compact-utility">
+            <button id="expandButton" class="player-button expand" type="button" aria-label="Open full player">Open</button>
+          </div>
+
+          <div class="transport-actions">
+            <button id="prevButton" class="player-button subtle icon-button transport-chip prev" type="button" aria-label="Previous"></button>
+            <button id="playButton" class="player-button primary" type="button" aria-label="Play or pause">Play</button>
+            <button id="nextButton" class="player-button subtle icon-button transport-chip next" type="button" aria-label="Next"></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="compact-player compact-player-alt" id="compactPlayerAlt" aria-label="Alt compact mini player">
+        <div class="artwork alt-artwork" id="artworkAlt"></div>
+
+        <div class="compact-alt-main">
+          <div class="compact-alt-top">
+            <div class="compact-alt-copy">
+              <h2 id="trackTitleAlt" class="scrolling-line alt-title-line">Open YouTube Music and sign in</h2>
+              <p id="trackArtistAlt" class="meta-artist scrolling-line alt-artist-line">Your session will stay inside this app.</p>
+            </div>
+            <button id="likeButtonAlt" class="player-button subtle alt-icon-button like-button" type="button" aria-label="Like this track" title="Like"></button>
+          </div>
+
+          <div class="compact-progress" aria-hidden="true">
+            <div class="compact-progress-times">
+              <span id="progressCurrentAlt">0:00</span>
+              <span id="progressDurationAlt">0:00</span>
+            </div>
+            <div class="compact-progress-rail">
+              <span id="progressFillAlt" class="compact-progress-fill"></span>
+              <span id="progressThumbAlt" class="compact-progress-thumb"></span>
+            </div>
+          </div>
+
+          <div class="compact-alt-controls">
+            <button id="prevButtonAlt" class="player-button subtle icon-button transport-chip prev" type="button" aria-label="Previous"></button>
+            <button id="playButtonAlt" class="player-button primary alt-play" type="button" aria-label="Play or pause">Play</button>
+            <button id="nextButtonAlt" class="player-button subtle icon-button transport-chip next" type="button" aria-label="Next"></button>
+          </div>
+
+          <div class="compact-alt-footer">
+            <button id="expandButtonAlt" class="player-button expand" type="button" aria-label="Open full player">Open</button>
+            <span id="healthDetailAlt" class="compact-health scrolling-line alt-footer-line">Waiting for player</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="webview-shell">
+        <div class="webview-overlay" id="loadingOverlay">
+          <p class="overlay-badge">Unique Player Scaffold</p>
+          <h2>Sign in once, then switch to compact mode.</h2>
+          <p>
+            This shell keeps the official YouTube Music site inside a persistent embedded session,
+            then layers a compact mini player on top for day-to-day use.
+          </p>
+        </div>
+        <div class="content-placeholder" aria-hidden="true"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="shell.js"></script>
+</body>
+</html>
