@@ -11,6 +11,7 @@ const expandButtonAlt = document.getElementById("expandButtonAlt");
 const prevButton = document.getElementById("prevButton");
 const playButton = document.getElementById("playButton");
 const nextButton = document.getElementById("nextButton");
+const likeButton = document.getElementById("likeButton");
 const prevButtonAlt = document.getElementById("prevButtonAlt");
 const playButtonAlt = document.getElementById("playButtonAlt");
 const nextButtonAlt = document.getElementById("nextButtonAlt");
@@ -86,9 +87,17 @@ function updateProgress(currentTime, duration) {
 }
 
 function setLikedState(liked) {
-  likeButtonAlt.classList.toggle("is-active", !!liked);
-  likeButtonAlt.setAttribute("aria-pressed", liked ? "true" : "false");
-  likeButtonAlt.title = liked ? "Liked" : "Like";
+  [likeButton, likeButtonAlt].forEach((button) => {
+    button.classList.toggle("is-active", !!liked);
+    button.setAttribute("aria-pressed", liked ? "true" : "false");
+    button.title = liked ? "Liked" : "Like";
+  });
+}
+
+function setPlayState(button, playing) {
+  button.dataset.playing = playing ? "true" : "false";
+  button.setAttribute("aria-label", playing ? "Pause" : "Play");
+  button.title = playing ? "Pause" : "Play";
 }
 
 function updateScrollingBehavior(element) {
@@ -160,8 +169,8 @@ function setMetadata(data) {
   setScrollingText(trackArtist, artist);
   setScrollingText(trackTitleAlt, title);
   setScrollingText(trackArtistAlt, artist);
-  playButton.textContent = data.playing ? "Pause" : "Play";
-  playButtonAlt.textContent = data.playing ? "Pause" : "Play";
+  setPlayState(playButton, !!data.playing);
+  setPlayState(playButtonAlt, !!data.playing);
   updateProgress(data.currentTime, data.duration);
   setLikedState(data.liked);
 
@@ -192,9 +201,7 @@ function setHealthState(health) {
     : downlinkText;
 
   healthSubline.textContent = headerSubline;
-  const compactHealthText = health.label
-    ? `${health.label} • ${health.detail || "Health signal unavailable"}`
-    : (health.detail || "Health signal unavailable");
+  const compactHealthText = health.detail || "Health signal unavailable";
   setScrollingText(healthDetail, compactHealthText);
   setScrollingText(healthDetailAlt, compactHealthText);
   healthDot.classList.remove("tone-good", "tone-warn", "tone-bad", "tone-neutral");
@@ -258,6 +265,7 @@ expandButtonAlt.addEventListener("click", expandFromCompact);
 playButton.addEventListener("click", () => window.ytmShell.playerAction("playPause"));
 prevButton.addEventListener("click", () => window.ytmShell.playerAction("prev"));
 nextButton.addEventListener("click", () => window.ytmShell.playerAction("next"));
+likeButton.addEventListener("click", () => window.ytmShell.playerAction("like"));
 playButtonAlt.addEventListener("click", () => window.ytmShell.playerAction("playPause"));
 prevButtonAlt.addEventListener("click", () => window.ytmShell.playerAction("prev"));
 nextButtonAlt.addEventListener("click", () => window.ytmShell.playerAction("next"));

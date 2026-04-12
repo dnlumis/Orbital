@@ -3,9 +3,12 @@ const {
   app,
   BrowserWindow,
   ipcMain,
+  Menu,
+  nativeImage,
   screen,
   session,
   shell,
+  Tray,
   WebContentsView,
 } = require("electron");
 
@@ -33,17 +36,26 @@ const SAFE_EXTERNAL_HOSTS = new Set([
   "www.youtube.com",
   "youtube.com",
 ]);
+const APP_ICON_PATH = path.join(__dirname, "assets", "tray-taskbar-icon.png");
 
 let mainWindow = null;
 let youtubeView = null;
 let authWindow = null;
 let metadataTimer = null;
+let tray = null;
 let isCompact = false;
 let compactVariant = 1;
 let isPinned = true;
 let isContentReady = false;
 let youtubeSession = null;
 let isFlexible = false;
+let lastMetadata = {
+  title: "YouTube Music",
+  artist: "Waiting for player",
+  artworkUrl: "",
+  playing: false,
+  liked: false,
+};
 let lastHealth = {
   label: "Connecting",
   detail: "Waiting for player",
@@ -302,6 +314,148 @@ function getBottomLeftPosition(width, height) {
   };
 }
 
+function getAppIcon() {
+  const icon = nativeImage.createFromPath(APP_ICON_PATH);
+  return icon.isEmpty() ? null : icon;
+}
+
+function createTrayIcon() {
+  const icon = getAppIcon();
+  return icon ? icon.resize({ width: 16, height: 16 }) : nativeImage.createEmpty();
+}
+
+function isWindowVisible() {
+  return !!mainWindow && !mainWindow.isDestroyed() && mainWindow.isVisible() && !mainWindow.isMinimized();
+}
+
+function getTrayTooltip() {
+  const title = lastMetadata.title || "YouTube Music";
+  const artist = lastMetadata.artist || "Waiting for player";
+  return `Orbital\n${title}\n${artist}`;
+}
+
+function setTrayMetadata(data) {
+  lastMetadata = {
+    title: data?.title || "YouTube Music",
+    artist: data?.artist || "Waiting for player",
+    artworkUrl: data?.artworkUrl || "",
+    playing: !!data?.playing,
+    liked: !!data?.liked,
+  };
+  updateTrayMenu();
+}
+
+function showMainWindow() {
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    createWindow();
+    return;
+  }
+
+  if (mainWindow.isMinimized()) {
+    mainWindow.restore();
+  }
+
+  mainWindow.show();
+  mainWindow.focus();
+}
+
+function hideMainWindow() {
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    return;
+  }
+
+  mainWindow.hide();
+}
+
+function toggleMainWindowVisibility() {
+  if (isWindowVisible()) {
+    hideMainWindow();
+    return;
+  }
+
+  showMainWindow();
+}
+
+function setCompactMode(nextCompact, nextVariant = compactVariant) {
+  compactVariant = Number(nextVariant) === 2 ? 2 : 1;
+  isCompact = !!nextCompact;
+  resizeForMode(isCompact);
+}
+
+function togglePinnedState() {
+  if (!mainWindow) {
+    return;
+  }
+
+  isPinned = !isPinned;
+  mainWindow.setAlwaysOnTop(isPinned, "screen-saver");
+  broadcast("window:state", { compact: isCompact, compactVariant, pinned: isPinned, flexible: isFlexible });
+  updateTrayMenu();
+}
+
+function toggleFlexibleState() {
+  if (!mainWindow || isCompact) {
+    return;
+  }
+
+  isFlexible = !isFlexible;
+  applyResizePolicy();
+  broadcast("window:state", { compact: isCompact, compactVariant, pinned: isPinned, flexible: isFlexible });
+  updateTrayMenu();
+}
+
+function quitFromTray() {
+  app.quit();
+}
+
+function updateTrayMenu() {
+  if (!tray) {
+    return;
+  }
+
+  const visibilityLabel = isWindowVisible() ? "Hide Orbital" : "Show Orbital";
+  const trackLabel = [lastMetadata.title, lastMetadata.artist].filter(Boolean).join(" - ") || "YouTube Music";
+  const menu = Menu.buildFromTemplate([
+    { label: visibilityLabel, click: () => toggleMainWindowVisibility() },
+    { type: "separator" },
+    { label: trackLabel, enabled: false },
+    { label: lastMetadata.playing ? "Pause" : "Play", click: () => runPlayerAction("playPause") },
+    { label: "Previous", click: () => runPlayerAction("prev") },
+    { label: "Next", click: () => runPlayerAction("next") },
+    { label: lastMetadata.liked ? "Unlike" : "Like", click: () => runPlayerAction("like") },
+    { type: "separator" },
+    {
+      label: "Layout",
+      submenu: [
+        { label: "Expanded", type: "radio", checked: !isCompact, click: () => setCompactMode(false) },
+        { label: "Compact", type: "radio", checked: isCompact && compactVariant === 1, click: () => setCompactMode(true, 1) },
+        { label: "Compact Wide", type: "radio", checked: isCompact && compactVariant === 2, click: () => setCompactMode(true, 2) },
+      ],
+    },
+    { label: "Always On Top", type: "checkbox", checked: isPinned, click: () => togglePinnedState() },
+    { label: "Adjust Size", type: "checkbox", checked: isFlexible, enabled: !isCompact, click: () => toggleFlexibleState() },
+    { type: "separator" },
+    { label: "Quit", click: () => quitFromTray() },
+  ]);
+
+  tray.setToolTip(getTrayTooltip());
+  tray.setContextMenu(menu);
+}
+
+function createTray() {
+  if (tray) {
+    updateTrayMenu();
+    return;
+  }
+
+  tray = new Tray(createTrayIcon());
+  tray.setIgnoreDoubleClickEvents(true);
+  tray.on("click", () => {
+    toggleMainWindowVisibility();
+  });
+  updateTrayMenu();
+}
+
 function broadcast(channel, payload) {
   if (!mainWindow || mainWindow.isDestroyed()) {
     return;
@@ -417,14 +571,18 @@ async function pushMetadata() {
 
   try {
     const data = await youtubeView.webContents.executeJavaScript(METADATA_SCRIPT);
+    setTrayMetadata(data);
     broadcast("player:metadata", data);
   } catch (_error) {
-    broadcast("player:metadata", {
+    const fallback = {
       title: "",
       artist: "Sign in and start playback",
       artworkUrl: "",
       playing: false,
-    });
+      liked: false,
+    };
+    setTrayMetadata(fallback);
+    broadcast("player:metadata", fallback);
   }
 }
 
@@ -474,6 +632,7 @@ function createAuthWindow(url) {
     autoHideMenuBar: true,
     show: false,
     title: "Google Sign In",
+    icon: APP_ICON_PATH,
     backgroundColor: "#0b1018",
     webPreferences: {
       partition: PARTITION,
@@ -713,6 +872,7 @@ function createWindow() {
     alwaysOnTop: true,
     skipTaskbar: false,
     title: "Orbital",
+    icon: APP_ICON_PATH,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -738,10 +898,18 @@ function createWindow() {
 
   mainWindow.on("resize", refreshYoutubeView);
   mainWindow.on("move", refreshYoutubeView);
+  mainWindow.on("hide", () => {
+    updateTrayMenu();
+  });
+  mainWindow.on("minimize", () => {
+    updateTrayMenu();
+  });
   mainWindow.on("restore", () => {
+    updateTrayMenu();
     setTimeout(refreshYoutubeView, 50);
   });
   mainWindow.on("show", () => {
+    updateTrayMenu();
     setTimeout(refreshYoutubeView, 50);
   });
   mainWindow.on("focus", () => {
@@ -786,6 +954,7 @@ function resizeForMode(nextCompact) {
   applyWindowMaterial();
   updateYoutubeBounds();
   broadcast("window:state", { compact: isCompact, compactVariant, pinned: isPinned, flexible: isFlexible });
+  updateTrayMenu();
 }
 
 async function runPlayerAction(action) {
@@ -809,11 +978,15 @@ app.whenReady().then(() => {
   youtubeSession = session.fromPartition(PARTITION);
   attachSessionGuards();
   createWindow();
+  createTray();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
+      return;
     }
+
+    showMainWindow();
   });
 });
 
@@ -849,23 +1022,12 @@ ipcMain.handle("window:enter-compact-variant", (_event, variant) => {
 });
 
 ipcMain.handle("window:toggle-pin", () => {
-  if (mainWindow) {
-    isPinned = !isPinned;
-    mainWindow.setAlwaysOnTop(isPinned, "screen-saver");
-    broadcast("window:state", { compact: isCompact, compactVariant, pinned: isPinned, flexible: isFlexible });
-  }
-
+  togglePinnedState();
   return { compact: isCompact, compactVariant, pinned: isPinned, flexible: isFlexible };
 });
 
 ipcMain.handle("window:toggle-flexible", () => {
-  if (!mainWindow || isCompact) {
-    return { compact: isCompact, compactVariant, pinned: isPinned, flexible: isFlexible };
-  }
-
-  isFlexible = !isFlexible;
-  applyResizePolicy();
-  broadcast("window:state", { compact: isCompact, compactVariant, pinned: isPinned, flexible: isFlexible });
+  toggleFlexibleState();
   return { compact: isCompact, compactVariant, pinned: isPinned, flexible: isFlexible };
 });
 
