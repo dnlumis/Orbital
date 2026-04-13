@@ -32,7 +32,7 @@ Orbital is a hardened Electron shell that embeds YouTube Music in a floating win
 - **Locked layout by default** — temporarily unlock with the `Adjust` button when you want to resize
 - **Hardened web view** — YouTube Music runs inside a sandboxed `WebContentsView` with a strict session partition and host allowlist
 - **Minimal renderer bridge** — `preload.js` exposes only the window-state and playback actions the shell needs, nothing more
-- **Hidden launcher** — `run_orbital.vbs` starts the app without leaving a console window behind
+- **At-a-glance connection health** —  the header surfaces a simple live playback signal with a color-coded status dot and friendly network labels like `Good`, `Fair`, or `Poor`, alongside estimated bandwidth, so you can tell how healthy streaming is without digging through diagnostics.
 
 ---
 
