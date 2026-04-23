@@ -14,13 +14,11 @@ Orbital is a hardened Electron shell that embeds YouTube Music in a floating win
 
 ## Screenshots
 
-> Placeholders — drop PNGs or GIFs into `docs/screenshots/` and they will render here.
+Current app captures from `docs/screenshots/`.
 
 | Expanded | Compact (tall) | Compact (slim) |
 | :---: | :---: | :---: |
-| ![Expanded mode](docs/screenshots/expanded.png) | ![Compact tall](docs/screenshots/compact-tall.png) | ![Compact slim](docs/screenshots/compact-slim.png) |
-
-![Orbital demo](docs/screenshots/demo.gif)
+| ![Expanded mode](docs/screenshots/normal.png) | ![Compact tall](docs/screenshots/compact2.png) | ![Compact slim](docs/screenshots/compactslim.png) |
 
 ---
 
