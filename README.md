@@ -1,4 +1,4 @@
-# Orbital
+# Orbital - YTMPlayer
 
 > YouTube Music, decoupled. A minimalist Electron wrapper that strips away the browser's overhead for a dedicated audio experience. A floating, always-on-top YouTube Music mini player for Windows.
 
