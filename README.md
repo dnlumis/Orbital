@@ -54,6 +54,15 @@ electron-player/
 
 ## Getting started
 
+### Install from GitHub
+
+1. Open the repository's **Releases** page on GitHub.
+2. Download the latest `Orbital-Setup-*.exe` installer from the release assets.
+3. Run the installer and follow the setup prompts.
+4. Launch **Orbital** from the Start menu or desktop shortcut.
+
+If Windows shows a SmartScreen warning, click **More info** and then **Run anyway**. This can happen because the installer is not code signed yet.
+
 ### Prerequisites
 
 - Windows 10 or 11
