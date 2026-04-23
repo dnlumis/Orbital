@@ -3,11 +3,52 @@
   "version": "0.1.0",
   "private": true,
   "description": "Orbital, a floating YouTube Music shell with compact mini player modes.",
+  "productName": "Orbital",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win nsis"
+  },
+  "build": {
+    "appId": "com.orbital.player",
+    "productName": "Orbital",
+    "artifactName": "${productName}-Setup-${version}.${ext}",
+    "asar": true,
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.png",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Orbital"
+    }
   },
   "devDependencies": {
-    "electron": "^36.6.0"
+    "electron": "^36.6.0",
+    "electron-builder": "^26.8.1"
   }
 }

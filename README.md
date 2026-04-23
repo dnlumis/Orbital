@@ -77,6 +77,14 @@ npm start
 
 Or simply double-click `run_orbital.bat`. For a launch with no visible terminal window, double-click `run_orbital.vbs` instead.
 
+### Build a Windows installer
+
+```powershell
+npm run dist:win
+```
+
+The generated installer EXE will be written to `dist/`.
+
 ---
 
 ## Usage

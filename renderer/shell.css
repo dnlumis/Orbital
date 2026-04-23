@@ -443,15 +443,15 @@ button {
 }
 
 .compact-player-alt {
-  grid-template-columns: 156px minmax(0, 1fr);
-  gap: 20px;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 16px;
   align-items: stretch;
-  padding: 18px 20px 18px 18px;
+  padding: 16px 18px 16px 16px;
 }
 
 .artwork {
-  width: 72px;
-  height: 72px;
+  width: 84px;
+  height: 84px;
   flex: 0 0 auto;
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -467,13 +467,41 @@ button {
 }
 
 .alt-artwork {
-  width: 156px;
-  height: 156px;
+  width: 168px;
+  height: 168px;
   border-radius: 16px;
   align-self: center;
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.22),
     0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.compact-player:not(.compact-player-alt) {
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  column-gap: 12px;
+  row-gap: 8px;
+  align-items: stretch;
+}
+
+.compact-player:not(.compact-player-alt) .artwork {
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+
+.compact-player:not(.compact-player-alt) .compact-body {
+  grid-column: 2;
+  grid-row: 1;
+  justify-content: flex-start;
+  align-self: start;
+  gap: 3px;
+  padding: 2px 0 0;
+}
+
+.compact-player:not(.compact-player-alt) .compact-actions {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
 }
 
 .compact-body {
@@ -516,28 +544,14 @@ button {
   font-size: 0.79rem;
 }
 
-.compact-footer {
-  display: block;
-  margin: 2px 0 0;
-  min-width: 0;
-  color: rgba(237, 243, 251, 0.42);
-  font-size: 0.69rem;
-  letter-spacing: 0.01em;
-}
-
-.compact-health {
-  color: rgba(237, 243, 251, 0.42);
-  font-size: inherit;
-}
-
 .compact-alt-main {
   display: grid;
-  grid-template-rows: auto auto auto auto;
-  gap: 12px;
+  grid-template-rows: auto auto auto;
+  gap: 10px;
   min-width: 0;
   min-height: 0;
   align-self: stretch;
-  padding: 4px 0;
+  padding: 2px 0;
   justify-content: center;
 }
 
@@ -545,7 +559,7 @@ button {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -573,13 +587,9 @@ button {
   --base-duration: 14s;
 }
 
-.alt-footer-line {
-  --base-duration: 15s;
-}
-
 .compact-progress {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .compact-progress-times {
@@ -622,28 +632,20 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .alt-play {
-  min-width: 88px;
-  height: 42px;
-  font-size: 0.94rem;
+  min-width: 84px;
+  height: 40px;
+  font-size: 0.92rem;
 }
 
 .compact-alt-footer {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 0;
+  justify-content: flex-start;
   align-self: end;
-}
-
-.compact-player-alt .compact-health {
-  color: rgba(237, 243, 251, 0.56);
-  font-size: 0.69rem;
-  line-height: 1.2;
 }
 
 .compact-player-alt .player-button.expand {
@@ -758,21 +760,19 @@ button {
 }
 
 .compact-actions {
-  min-width: 158px;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 8px;
+  min-width: 150px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   margin-left: 0;
-  align-self: stretch;
-  padding: 8px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025));
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.015),
-    0 6px 16px rgba(0, 0, 0, 0.08);
+  align-self: end;
+  width: 100%;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
 }
 
 .alt-icon-button {
@@ -799,14 +799,16 @@ button {
 .compact-utility {
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  order: 2;
+  width: auto;
 }
 
 .transport-actions {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 6px;
+  order: 1;
 }
 
 .icon-button {

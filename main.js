@@ -134,6 +134,37 @@ const HEALTH_SCRIPT = `
     const saveData = !!connection?.saveData;
     const speedSuffix = downlink !== null ? " at " + downlink.toFixed(1) + " Mbps" : "";
 
+    function getConnectionQuality() {
+      if (effectiveType === "4g") {
+        return "good";
+      }
+
+      if (effectiveType === "3g") {
+        return "fair";
+      }
+
+      if (effectiveType === "2g" || effectiveType === "slow-2g") {
+        return "poor";
+      }
+
+      if (downlink !== null) {
+        if (downlink >= 1.5) {
+          return "good";
+        }
+
+        if (downlink >= 0.5) {
+          return "fair";
+        }
+
+        return "poor";
+      }
+
+      return null;
+    }
+
+    const connectionQuality = getConnectionQuality();
+    const connectionPhrase = connectionQuality ? " on " + connectionQuality + " connection" : "";
+
     let tone = "neutral";
     let label = "Connecting";
     let detail = "Waiting for player";
@@ -153,8 +184,8 @@ const HEALTH_SCRIPT = `
     } else if (readyState >= 4 && !paused) {
       tone = downlink !== null && downlink < 1.5 ? "warn" : "good";
       label = tone === "good" ? "Stable" : "Adaptive";
-      detail = effectiveType
-        ? "Streaming on " + effectiveType + speedSuffix
+      detail = connectionQuality
+        ? "Streaming" + connectionPhrase + speedSuffix
         : "Playback buffer is healthy";
     } else if (readyState >= 3 && paused) {
       tone = "good";
@@ -163,8 +194,8 @@ const HEALTH_SCRIPT = `
     } else {
       tone = "warn";
       label = "Buffering";
-      detail = effectiveType
-        ? "Recovering on " + effectiveType + speedSuffix
+      detail = connectionQuality
+        ? "Recovering" + connectionPhrase + speedSuffix
         : "Player is building buffer";
     }
 
@@ -975,6 +1006,7 @@ async function runPlayerAction(action) {
 }
 
 app.whenReady().then(() => {
+  app.setAppUserModelId("com.orbital.player");
   youtubeSession = session.fromPartition(PARTITION);
   attachSessionGuards();
   createWindow();

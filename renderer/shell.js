@@ -25,13 +25,11 @@ const artworkAlt = document.getElementById("artworkAlt");
 const loadingOverlay = document.getElementById("loadingOverlay");
 const healthDot = document.getElementById("healthDot");
 const healthSubline = document.getElementById("healthSubline");
-const healthDetail = document.getElementById("healthDetail");
-const healthDetailAlt = document.getElementById("healthDetailAlt");
 const progressCurrentAlt = document.getElementById("progressCurrentAlt");
 const progressDurationAlt = document.getElementById("progressDurationAlt");
 const progressFillAlt = document.getElementById("progressFillAlt");
 const progressThumbAlt = document.getElementById("progressThumbAlt");
-const scrollingElements = [trackTitle, trackArtist, healthDetail, trackTitleAlt, trackArtistAlt, healthDetailAlt];
+const scrollingElements = [trackTitle, trackArtist, trackTitleAlt, trackArtistAlt];
 
 // Renderer shell state and interaction notes, signed dnlumis.
 let shellState = {
@@ -189,6 +187,52 @@ function setLoadingState(loading) {
   loadingOverlay.classList.toggle("hidden", !loading);
 }
 
+function getHeaderConnectionLabel(health) {
+  const effectiveType = typeof health?.effectiveType === "string" ? health.effectiveType.toLowerCase() : "";
+
+  if (effectiveType === "4g") {
+    return "Good";
+  }
+
+  if (effectiveType === "3g") {
+    return "Fair";
+  }
+
+  if (effectiveType === "2g" || effectiveType === "slow-2g") {
+    return "Poor";
+  }
+
+  if (typeof health?.downlink === "number") {
+    if (health.downlink >= 1.5) {
+      return "Good";
+    }
+
+    if (health.downlink >= 0.5) {
+      return "Fair";
+    }
+
+    return "Poor";
+  }
+
+  return "Network";
+}
+
+function getHeaderDotTone(headerLabel, fallbackTone) {
+  if (headerLabel === "Good") {
+    return "good";
+  }
+
+  if (headerLabel === "Fair") {
+    return "warn";
+  }
+
+  if (headerLabel === "Poor") {
+    return "bad";
+  }
+
+  return fallbackTone || "neutral";
+}
+
 function setHealthState(health) {
   if (!health) {
     return;
@@ -196,16 +240,15 @@ function setHealthState(health) {
 
   // The header and compact footer mirror the same health signal at different emphasis levels.
   const downlinkText = typeof health.downlink === "number" ? `${health.downlink.toFixed(1)} Mbps` : "No downlink";
-  const headerSubline = health.effectiveType
-    ? `${health.effectiveType} • ${downlinkText}`
-    : downlinkText;
+  const headerLabel = getHeaderConnectionLabel(health);
+  const headerDotTone = getHeaderDotTone(headerLabel, health.tone);
+  const headerSubline = typeof health.downlink === "number"
+    ? `${headerLabel} • ${downlinkText}`
+    : headerLabel;
 
   healthSubline.textContent = headerSubline;
-  const compactHealthText = health.detail || "Health signal unavailable";
-  setScrollingText(healthDetail, compactHealthText);
-  setScrollingText(healthDetailAlt, compactHealthText);
   healthDot.classList.remove("tone-good", "tone-warn", "tone-bad", "tone-neutral");
-  healthDot.classList.add(`tone-${health.tone || "neutral"}`);
+  healthDot.classList.add(`tone-${headerDotTone}`);
 }
 
 async function initializeShell() {
